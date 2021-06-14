@@ -206,6 +206,9 @@ class Ui_Dialog(object):
         self.search_publishes.setCheckable(True)
         self.search_publishes.setObjectName("search_publishes")
         self.horizontalLayout_2.addWidget(self.search_publishes)
+        self.filter_menu_btn = FilterMenuButton(Dialog)
+        self.filter_menu_btn.setObjectName("filter_menu_btn")
+        self.horizontalLayout_2.addWidget(self.filter_menu_btn)
         self.info = QtGui.QToolButton(Dialog)
         self.info.setMinimumSize(QtCore.QSize(80, 26))
         self.info.setObjectName("info")
@@ -384,6 +387,7 @@ class Ui_Dialog(object):
         self.list_mode.setText(QtGui.QApplication.translate("Dialog", "...", None, QtGui.QApplication.UnicodeUTF8))
         self.search_publishes.setToolTip(QtGui.QApplication.translate("Dialog", "Filter Publishes", None, QtGui.QApplication.UnicodeUTF8))
         self.search_publishes.setAccessibleName(QtGui.QApplication.translate("Dialog", "search_publishes", None, QtGui.QApplication.UnicodeUTF8))
+        self.filter_menu_btn.setText(QtGui.QApplication.translate("Dialog", "Filters", None, QtGui.QApplication.UnicodeUTF8))
         self.info.setToolTip(QtGui.QApplication.translate("Dialog", "Use this button to <i>toggle details on and off</i>. ", None, QtGui.QApplication.UnicodeUTF8))
         self.info.setText(QtGui.QApplication.translate("Dialog", "Show Details", None, QtGui.QApplication.UnicodeUTF8))
         self.publish_view.setAccessibleName(QtGui.QApplication.translate("Dialog", "publish_view", None, QtGui.QApplication.UnicodeUTF8))
@@ -400,4 +404,5 @@ class Ui_Dialog(object):
         self.version_history_label.setText(QtGui.QApplication.translate("Dialog", "<small>Complete Version History</small>", None, QtGui.QApplication.UnicodeUTF8))
         self.history_view.setAccessibleName(QtGui.QApplication.translate("Dialog", "history_view", None, QtGui.QApplication.UnicodeUTF8))
 
+from ..framework_qtwidgets import FilterMenuButton
 from . import resources_rc
