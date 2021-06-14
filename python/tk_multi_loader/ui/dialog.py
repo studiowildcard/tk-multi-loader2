@@ -387,7 +387,7 @@ class Ui_Dialog(object):
         self.list_mode.setText(QtGui.QApplication.translate("Dialog", "...", None, QtGui.QApplication.UnicodeUTF8))
         self.search_publishes.setToolTip(QtGui.QApplication.translate("Dialog", "Filter Publishes", None, QtGui.QApplication.UnicodeUTF8))
         self.search_publishes.setAccessibleName(QtGui.QApplication.translate("Dialog", "search_publishes", None, QtGui.QApplication.UnicodeUTF8))
-        self.filter_menu_btn.setText(QtGui.QApplication.translate("Dialog", "Filters", None, QtGui.QApplication.UnicodeUTF8))
+        self.filter_menu_btn.setText(QtGui.QApplication.translate("Dialog", "Filter", None, QtGui.QApplication.UnicodeUTF8))
         self.info.setToolTip(QtGui.QApplication.translate("Dialog", "Use this button to <i>toggle details on and off</i>. ", None, QtGui.QApplication.UnicodeUTF8))
         self.info.setText(QtGui.QApplication.translate("Dialog", "Show Details", None, QtGui.QApplication.UnicodeUTF8))
         self.publish_view.setAccessibleName(QtGui.QApplication.translate("Dialog", "publish_view", None, QtGui.QApplication.UnicodeUTF8))
