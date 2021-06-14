@@ -28,6 +28,7 @@ from .search_widget import SearchWidget
 from .banner import Banner
 from .loader_action_manager import LoaderActionManager
 from .utils import resolve_filters
+from .framework_qtwidgets import ShotgunFilterMenu
 
 from . import constants
 from . import model_item_data
@@ -326,6 +327,21 @@ class AppDialog(QtGui.QWidget):
         self._reload_action = QtGui.QAction("Reload", self)
         self._reload_action.triggered.connect(self._on_reload_action)
         self.ui.cog_button.addAction(self._reload_action)
+
+        # Set up filter menu
+        # TODO save and restore filters
+        self._filter_menu = ShotgunFilterMenu(self)
+        self._filter_menu.visible_fields = [
+            "PublishedFile.description",
+            "PublishedFile.sg_status_list",
+            "PublishedFile.task.Task.sg_status_list",
+            "PublishedFile.published_file_type",
+            "PublishedFile.created_by",
+        ]
+        self._filter_menu.ignore_fields = ["PublishedFile.code"]
+        self._filter_menu.set_filter_model(self._publish_proxy_model)
+        self._filter_menu.build_menu()
+        self.ui.filter_menu_btn.setMenu(self._filter_menu)
 
         #################################################
         # set up preset tabs and load and init tree views
