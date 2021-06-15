@@ -13,14 +13,14 @@ from sgtk.platform.qt import QtCore, QtGui
 from tank_vendor import six
 
 from .model_latestpublish import SgLatestPublishModel
-from .framework_qtwidgets import FilterProxyModel
+from .framework_qtwidgets import FilterItemProxyModel
 
 shotgun_model = sgtk.platform.import_framework(
     "tk-framework-shotgunutils", "shotgun_model"
 )
 
 
-class SgLatestPublishProxyModel(FilterProxyModel):
+class SgLatestPublishProxyModel(FilterItemProxyModel):
     """
     Filter model to be used in conjunction with SgLatestPublishModel
     """
