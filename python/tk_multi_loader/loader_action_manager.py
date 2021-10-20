@@ -242,7 +242,23 @@ class LoaderActionManager(ActionManager):
         See documentation for get_actions_for_publish. The functionality is the same, but only for
         a single publish.
         """
-        return self.get_actions_for_publishes([sg_data], ui_area)
+
+        qt_actions = self.get_actions_for_publishes([sg_data], ui_area)
+        # Find paths associated with the Shotgun entity.
+        paths = self._app.sgtk.paths_from_entity(sg_data["type"], sg_data["id"])
+        # Add the action only when there are some paths.
+        if paths:
+            fs = QtGui.QAction("Show in the file system", None)
+            cb = partial(self._show_in_fs, paths)
+            fs.triggered[()].connect(cb)
+            qt_actions.append(fs)
+
+        sg = QtGui.QAction("Show details in ShotGrid", None)
+        cb = partial(self._show_in_sg, sg_data)
+        sg.triggered[()].connect(cb)
+        qt_actions.append(sg)
+        
+        return qt_actions
 
     def get_default_action_for_publish(self, sg_data, ui_area):
         """
