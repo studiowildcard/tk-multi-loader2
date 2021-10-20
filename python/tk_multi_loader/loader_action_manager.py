@@ -245,7 +245,7 @@ class LoaderActionManager(ActionManager):
 
         qt_actions = self.get_actions_for_publishes([sg_data], ui_area)
         # Find paths associated with the Shotgun entity.
-        paths = self._app.sgtk.paths_from_entity(sg_data["type"], sg_data["id"])
+        paths = [sg_data["path"]["local_path"]]
         # Add the action only when there are some paths.
         if paths:
             fs = QtGui.QAction("Show in the file system", None)
@@ -257,7 +257,7 @@ class LoaderActionManager(ActionManager):
         cb = partial(self._show_in_sg, sg_data)
         sg.triggered[()].connect(cb)
         qt_actions.append(sg)
-        
+
         return qt_actions
 
     def get_default_action_for_publish(self, sg_data, ui_area):
@@ -518,16 +518,23 @@ class LoaderActionManager(ActionManager):
 
             # get the setting
             system = sys.platform
-
-            # run the app
-            if system == "linux2":
-                cmd = 'xdg-open "%s"' % disk_location
-            elif system == "darwin":
-                cmd = 'open "%s"' % disk_location
-            elif system == "win32":
-                cmd = 'cmd.exe /C start "Folder" "%s"' % disk_location
+            
+            if os.path.isdir(disk_location):
+                # run the app
+                if system == "linux2":
+                    cmd = 'xdg-open "%s"' % disk_location
+                elif system == "darwin":
+                    cmd = 'open "%s"' % disk_location
+                elif system == "win32":
+                    cmd = 'cmd.exe /C start "Folder" "%s"' % disk_location
+                else:
+                    raise Exception("Platform '%s' is not supported." % system)
             else:
-                raise Exception("Platform '%s' is not supported." % system)
+                # run the app
+                if system == "win32":
+                    cmd = "explorer.exe /select,%s" % disk_location
+                else:
+                    raise Exception("Platform '%s' is not supported." % system)
 
             exit_code = os.system(cmd)
             if exit_code != 0:
