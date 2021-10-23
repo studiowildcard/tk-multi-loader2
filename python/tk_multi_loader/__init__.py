@@ -29,7 +29,7 @@ def show_dialog(app):
 
     # Create and display the splash screen
     splash_pix = QtGui.QPixmap(":/res/splash.png")
-    splash = QtGui.QSplashScreen(splash_pix, QtCore.Qt.WindowStaysOnTopHint)
+    splash = QtGui.QSplashScreen(splash_pix)
     splash.setMask(splash_pix.mask())
     splash.show()
     QtCore.QCoreApplication.processEvents()
