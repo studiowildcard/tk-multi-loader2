@@ -27,13 +27,6 @@ def show_dialog(app):
     # defer imports so that the app works gracefully in batch modes
     from .dialog import AppDialog
 
-    # Create and display the splash screen
-    splash_pix = QtGui.QPixmap(":/res/splash.png")
-    splash = QtGui.QSplashScreen(splash_pix)
-    splash.setMask(splash_pix.mask())
-    splash.show()
-    QtCore.QCoreApplication.processEvents()
-
     # create the action manager for the Loader UI:
     from .loader_action_manager import LoaderActionManager
 
@@ -45,6 +38,13 @@ def show_dialog(app):
 
     # Keep pointer to dialog so as to be able to hide/show it in actions
     engine_name = app.engine.instance_name
+
+    # Create and display the splash screen
+    splash_pix = QtGui.QPixmap(":/res/splash.png")
+    splash = QtGui.QSplashScreen(splash_pix)
+    splash.setMask(splash_pix.mask())
+    splash.show()
+    QtCore.QCoreApplication.processEvents()
 
     # attach splash screen to the main window to help GC
     w.__splash_screen = splash
