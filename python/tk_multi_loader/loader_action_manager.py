@@ -9,6 +9,8 @@
 # not expressly granted therein are reserved by Shotgun Software Inc.
 
 import sgtk
+import datetime
+from functools import partial
 import os
 import sys
 from sgtk.platform.qt import QtCore, QtGui
@@ -99,11 +101,8 @@ class LoaderActionManager(ActionManager):
             ]
 
             # Bind all the action params to a single invocation of the _execute_hook.
-            a.triggered[()].connect(
-                lambda qt_action=a, actions=actions: self._execute_hook(
-                    qt_action, actions
-                )
-            )
+            cb = partial(self._execute_hook, a, actions)
+            a.triggered[()].connect(cb)
             a.setData(actions)
             qt_actions.append(a)
 
@@ -114,7 +113,23 @@ class LoaderActionManager(ActionManager):
         See documentation for get_actions_for_publish. The functionality is the same, but only for
         a single publish.
         """
-        return self.get_actions_for_publishes([sg_data], ui_area)
+
+        qt_actions = self.get_actions_for_publishes([sg_data], ui_area)
+        # Find paths associated with the Shotgun entity.
+        paths = [sg_data["path"]["local_path"]]
+        # Add the action only when there are some paths.
+        if paths:
+            fs = QtGui.QAction("Show in the file system", None)
+            cb = partial(self._show_in_fs, paths)
+            fs.triggered[()].connect(cb)
+            qt_actions.append(fs)
+
+        sg = QtGui.QAction("Show details in ShotGrid", None)
+        cb = partial(self._show_in_sg, sg_data)
+        sg.triggered[()].connect(cb)
+        qt_actions.append(sg)
+
+        return qt_actions
 
     def get_default_action_for_publish(self, sg_data, ui_area):
         """
@@ -184,11 +199,8 @@ class LoaderActionManager(ActionManager):
                 ]
 
                 # Bind all the action params to a single invocation of the _execute_hook.
-                a.triggered[()].connect(
-                    lambda qt_action=a, actions=actions: self._execute_hook(
-                        qt_action, actions
-                    )
-                )
+                cb = partial(self._execute_hook, a, actions)
+                a.triggered[()].connect(cb)
                 a.setData(actions)
                 qt_actions.append(a)
 
@@ -197,15 +209,18 @@ class LoaderActionManager(ActionManager):
         # Add the action only when there are some paths.
         if paths:
             fs = QtGui.QAction("Show in the file system", None)
-            fs.triggered[()].connect(lambda f=paths: self._show_in_fs(f))
+            cb = partial(self._show_in_fs, paths)
+            fs.triggered[()].connect(cb)
             qt_actions.append(fs)
 
         sg = QtGui.QAction("Show details in ShotGrid", None)
-        sg.triggered[()].connect(lambda f=sg_data: self._show_in_sg(f))
+        cb = partial(self._show_in_sg, sg_data)
+        sg.triggered[()].connect(cb)
         qt_actions.append(sg)
 
         sr = QtGui.QAction("Show in Media Center", None)
-        sr.triggered[()].connect(lambda f=sg_data: self._show_in_sr(f))
+        cb = partial(self._show_in_sr, sg_data)
+        sr.triggered[()].connect(cb)
         qt_actions.append(sr)
 
         return qt_actions
@@ -321,16 +336,23 @@ class LoaderActionManager(ActionManager):
 
             # get the setting
             system = sys.platform
-
-            # run the app
-            if system == "linux2":
-                cmd = 'xdg-open "%s"' % disk_location
-            elif system == "darwin":
-                cmd = 'open "%s"' % disk_location
-            elif system == "win32":
-                cmd = 'cmd.exe /C start "Folder" "%s"' % disk_location
+            
+            if os.path.isdir(disk_location):
+                # run the app
+                if system == "linux2":
+                    cmd = 'xdg-open "%s"' % disk_location
+                elif system == "darwin":
+                    cmd = 'open "%s"' % disk_location
+                elif system == "win32":
+                    cmd = 'cmd.exe /C start "Folder" "%s"' % disk_location
+                else:
+                    raise Exception("Platform '%s' is not supported." % system)
             else:
-                raise Exception("Platform '%s' is not supported." % system)
+                # run the app
+                if system == "win32":
+                    cmd = "explorer.exe /select,%s" % disk_location
+                else:
+                    raise Exception("Platform '%s' is not supported." % system)
 
             exit_code = os.system(cmd)
             if exit_code != 0:
