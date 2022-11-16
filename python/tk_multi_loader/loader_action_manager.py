@@ -206,6 +206,8 @@ class LoaderActionManager(ActionManager):
 
         # Find paths associated with the Shotgun entity.
         paths = self._app.sgtk.paths_from_entity(sg_data["type"], sg_data["id"])
+        if(sg_data["type"] == "Task" and not paths):
+            paths = self._app.sgtk.paths_from_entity(sg_data["entity"]["type"], sg_data["entity"]["id"])
         # Add the action only when there are some paths.
         if paths:
             fs = QtGui.QAction("Show in the file system", None)
